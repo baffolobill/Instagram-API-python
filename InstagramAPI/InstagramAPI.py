@@ -149,7 +149,7 @@ class InstagramAPI:
                                 'Connection' : 'close',
                                 'User-Agent' : self.USER_AGENT})
         response = self.s.post(self.API_URL + "upload/photo/", data=m.to_string())
-        self.logger.debug(".uploadPhoto response: %s", response)
+        self.logger.debug(".uploadPhoto response: status=%s content=%s", response.status_code, response.content)
         if response.status_code == 200:
             configure_result = self.configure(upload_id, photo, caption)
             self.logger.debug(".uploadPhoto configure response: %s", configure_result)
