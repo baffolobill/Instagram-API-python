@@ -15,6 +15,7 @@ import sys
 from datetime import datetime
 import calendar
 import os
+import logging
 
 #The urllib library was split into other modules from Python 2 to Python 3
 if sys.version_info.major == 3:
@@ -60,6 +61,7 @@ class InstagramAPI:
         self.setUser(username, password)
         self.isLoggedIn = False
         self.LastResponse = None
+        self.logger = logging.getLogger(__name__)
 
     def setUser(self, username, password):
         self.username = username
@@ -147,9 +149,13 @@ class InstagramAPI:
                                 'Connection' : 'close',
                                 'User-Agent' : self.USER_AGENT})
         response = self.s.post(self.API_URL + "upload/photo/", data=m.to_string())
+        self.logger.debug(".uploadPhoto response: %s", response)
         if response.status_code == 200:
-            if self.configure(upload_id, photo, caption):
-                self.expose()
+            configure_result = self.configure(upload_id, photo, caption)
+            self.logger.debug(".uploadPhoto configure response: %s", configure_result)
+            if configure_result:
+                expose_result = self.expose()
+                self.logger.debug(".uploadPhoto expose response: %s", expose_result)
         return False
 
     def uploadVideo(self, video, thumbnail, caption = None, upload_id = None):
